@@ -41,16 +41,16 @@ namespace Connect4
 
 			ColouredChar? c = CheckForWinCondition();
 
-			if (c != null && c == Program.Game.CurrentPlayer?.Sprite)
+			if (c != null && c == CurrentPlayer?.Sprite)
 			{
 				if (!EndlessMode)
 				{
-					Program.PopupMessage($"{Program.Game.CurrentPlayer.Name} has won the game!", ConsoleColor.Green, 10);
+					Program.PopupMessageColouredName($"[[NAME]] has won the game!", CurrentPlayer.Name, CurrentPlayer.Sprite.Colour, ConsoleColor.White, 10);
 					Program.ProgramRunning = false;
 				}
 				else
 				{
-					Program.PopupMessage($"{Program.Game.CurrentPlayer.Name} has gained a point!", ConsoleColor.Green, 10);
+					Program.PopupMessageColouredName($"[[NAME]] has gained a point!", CurrentPlayer.Name, CurrentPlayer.Sprite.Colour, ConsoleColor.White, 10);
 				}
 			}
 

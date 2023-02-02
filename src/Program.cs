@@ -78,6 +78,31 @@ namespace Connect4
 			Renderer.Render();
 			Console.ReadKey();
 		}
+		
+		public static void PopupMessageColouredName(string prompt, string name, ConsoleColor nameColour, ConsoleColor col = ConsoleColor.Cyan, int yoffset = 0)
+		{
+			var coords = new Coordinates(
+				(WINDOW_WIDTH / 2) - 2 - (prompt.Length / 2),
+				(WINDOW_HEIGHT / 2) - 2 + yoffset
+			);
+
+			prompt = prompt.Replace("[[NAME]]", name);
+			
+			Renderer.PushImage(new TextImage()
+					.DrawBox(
+						new Coordinates(0, 0), new Coordinates(prompt.Length + 3, 2),
+						ConsoleColor.DarkGray
+					).DrawText(
+						prompt, col, new Coordinates(2, 1)
+					).DrawText(
+						name, nameColour, new Coordinates(2 + prompt.IndexOf(name), 1)
+					),
+				coords, 10, true
+			);
+
+			Renderer.Render();
+			Console.ReadKey();
+		}
 
 		public static void PopupError(string error)
 		{ 
