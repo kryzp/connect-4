@@ -1,4 +1,5 @@
-﻿using Connect4.Rendering;
+﻿using Connect4.Game.Player;
+using Connect4.Rendering;
 using Connect4.UI;
 using Connect4.UI.Elements;
 
@@ -16,9 +17,16 @@ namespace Connect4
 		
 		private static Menu startMenu;
 		private static InputBox endlessModeInputBox;
-		private static InputBox nameInputBox;
-		private static InputBox tokenSymbolInputBox;
-		private static InputBox tokenColourInputBox;
+		
+		private static InputBox player1NameInputBox;
+		private static InputBox player1TokenSymbolInputBox;
+		private static InputBox player1ColourInputBox;
+		
+		private static InputBox player2NameInputBox;
+		private static InputBox player2TokenSymbolInputBox;
+		private static InputBox player2ColourInputBox;
+
+		private static InputBox shouldP2beAI;
 
 		public static bool ProgramRunning = true;
 		
@@ -136,77 +144,134 @@ namespace Connect4
 				startMenu.Add(new Button(new Coordinates(1, 1), "Begin Game!", () =>
 				{
 					if (endlessModeInputBox.Text.Length <= 0 ||
-					    nameInputBox.Text.Length <= 0 ||
-					    tokenSymbolInputBox.Text.Length <= 0 ||
-					    tokenColourInputBox.Text.Length <= 0)
+					    player1NameInputBox.Text.Length <= 0 ||
+					    player1TokenSymbolInputBox.Text.Length <= 0 ||
+					    player1ColourInputBox.Text.Length <= 0)
 					{
 						PopupError("One of the input boxes is left empty!");
 						return;
 					}
 					
-					Game.EndlessMode = endlessModeInputBox.Text.ToUpper() == "Y";
+					Game.EndlessMode = endlessModeInputBox.Text.ToUpper()[0] == 'Y';
 					
-					ConsoleColor playerColour = tokenColourInputBox.Text.ToUpper()[0] switch
+					ConsoleColor player1Colour = player1ColourInputBox.Text.ToUpper()[0] switch
 					{
 						'B' => ConsoleColor.Blue,
 						'G' => ConsoleColor.Green,
-						'M' => ConsoleColor.Magenta,
-						'C' => ConsoleColor.Cyan,
 						_ => ConsoleColor.Blue
 					};
 					
-					Game.Players[0].Name = nameInputBox.Text;
-					Game.Players[0].Sprite = new ColouredChar(tokenSymbolInputBox.Text[0], playerColour);
-					Game.Players[0].WinColour = DarkerColour(playerColour);
+					ConsoleColor player2Colour = player2ColourInputBox.Text.ToUpper()[0] switch
+					{
+						'R' => ConsoleColor.Red,
+						'M' => ConsoleColor.Magenta,
+						_ => ConsoleColor.Red
+					};
 					
-					Game.Players[1].Name = "AI Player";
-					Game.Players[1].Sprite = new ColouredChar('X', ConsoleColor.Red);
-					Game.Players[1].WinColour = ConsoleColor.DarkRed;
+					Game.Players = new PlayerBase[2]
+					{
+						new RealPlayer(),
+						(shouldP2beAI.Text.ToUpper()[0] == 'Y') ? new AIPlayer() : new RealPlayer()
+					};
+					
+					Game.Players[0].Name = player1NameInputBox.Text;
+					Game.Players[0].Sprite = new ColouredChar(player1TokenSymbolInputBox.Text[0], player1Colour);
+					Game.Players[0].WinColour = DarkerColour(player1Colour);
+					
+					Game.Players[1].Name = player2NameInputBox.Text;
+					Game.Players[1].Sprite = new ColouredChar(player2TokenSymbolInputBox.Text[0], player2Colour);
+					Game.Players[1].WinColour = DarkerColour(player2Colour);
 					
 					curState = GameState.PLAYING;
 					firstFrame = true;
+
+					Game.Tick = 0;
 				})
 				{
 					ID = 0,
 					DownID = 1
 				});
 
-				endlessModeInputBox = new InputBox(new Coordinates(1, 5), (WINDOW_WIDTH - 2, 4), "Play on endless mode? (Y/n)")
+				endlessModeInputBox = new InputBox(new Coordinates(1, 4), (WINDOW_WIDTH - 2, 4), "Play on endless mode? (Y/n)")
 				{
 					ID = 1,
 					UpID = 0,
 					DownID = 2
 				};
 				
-				nameInputBox = new InputBox(new Coordinates(1, 10), (WINDOW_WIDTH - 2, 4), "Player Name")
+				player1NameInputBox = new InputBox(new Coordinates(1, 8), ((WINDOW_WIDTH - 2) / 2, 4), "Player 1 Name")
 				{
 					ID = 2,
 					UpID = 1,
-					DownID = 3
+					DownID = 4,
+					RightID = 3
 				};
 				
-				tokenSymbolInputBox = new InputBox(new Coordinates(1, 15), (WINDOW_WIDTH - 2, 4), "Token Symbol")
+				player2NameInputBox = new InputBox(new Coordinates(WINDOW_WIDTH / 2, 8), ((WINDOW_WIDTH - 2) / 2, 4), "Player 2 Name")
 				{
 					ID = 3,
 					UpID = 2,
-					DownID = 4
+					DownID = 5,
+					LeftID = 2
 				};
 				
-				tokenColourInputBox = new InputBox(new Coordinates(1, 20), (WINDOW_WIDTH - 2, 4), "Token Colour: [B]lue, [G]reen, [M]agenta, [C]yan")
+				player1TokenSymbolInputBox = new InputBox(new Coordinates(1, 12), ((WINDOW_WIDTH - 2) / 2, 4), "Player 1 Token Symbol")
 				{
 					ID = 4,
+					UpID = 2,
+					DownID = 6,
+					RightID = 5
+				};
+				
+				player2TokenSymbolInputBox = new InputBox(new Coordinates(WINDOW_WIDTH / 2, 12), ((WINDOW_WIDTH - 2) / 2, 4), "Player 2 Token Symbol")
+				{
+					ID = 5,
 					UpID = 3,
+					DownID = 6,
+					LeftID = 4
+				};
+				
+				player1ColourInputBox = new InputBox(new Coordinates(1, 16), (WINDOW_WIDTH - 2, 4), "Player 1 Token Colour: [B]lue, [G]reen")
+				{
+					ID = 6,
+					UpID = 4,
+					DownID = 7,
+				};
+				
+				player2ColourInputBox = new InputBox(new Coordinates(1, 20), (WINDOW_WIDTH - 2, 4), "Player 2 Token Colour: [R]ed, [M]agenta")
+				{
+					ID = 7,
+					UpID = 6,
+				};
+				
+				player2ColourInputBox = new InputBox(new Coordinates(1, 20), (WINDOW_WIDTH - 2, 4), "Player 2 Token Colour: [R]ed, [M]agenta")
+				{
+					ID = 7,
+					UpID = 6,
+					DownID = 8
+				};
+
+				shouldP2beAI = new InputBox(new Coordinates(1, 24), (WINDOW_WIDTH - 2, 4), "Should player 2 be an AI? (Y/n)")
+				{
+					ID = 8,
+					UpID = 7
 				};
 				
 				startMenu.Add(endlessModeInputBox);
-				startMenu.Add(nameInputBox);
-				startMenu.Add(tokenSymbolInputBox);
-				startMenu.Add(tokenColourInputBox);
+				
+				startMenu.Add(player1NameInputBox);
+				startMenu.Add(player1TokenSymbolInputBox);
+				startMenu.Add(player1ColourInputBox);
+				
+				startMenu.Add(player2NameInputBox);
+				startMenu.Add(player2TokenSymbolInputBox);
+				startMenu.Add(player2ColourInputBox);
+
+				startMenu.Add(shouldP2beAI);
 				
 				startMenu.SetSelectedElement(0);
 			}
 
-			Game.Tick = 0;
 			firstFrame = true;
 			
 			while (ProgramRunning)
@@ -221,6 +286,8 @@ namespace Connect4
 					case GameState.START:
 						startMenu.Update();
 						startMenu.Draw();
+						Renderer.PushImage(new TextImage().DrawText("Use the arrow keys to move around the menu!", ConsoleColor.Cyan), new Coordinates(2, WINDOW_HEIGHT - 3), 0.9f, true);
+						Renderer.PushImage(new TextImage().DrawText("Use the enter key to press the begin game button!", ConsoleColor.Cyan), new Coordinates(2, WINDOW_HEIGHT - 2), 0.9f, true);
 						break;
 					
 					case GameState.PLAYING:

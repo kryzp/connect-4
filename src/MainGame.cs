@@ -27,12 +27,6 @@ namespace Connect4
 		{
 			Board = new Board(7, 6);
 			EndlessMode = false;
-			
-			Players = new PlayerBase[2]
-			{
-				new RealPlayer(),
-				new AIPlayer()
-			};
 		}
 		
 		public void Update()
@@ -60,6 +54,7 @@ namespace Connect4
 			if (EndlessMode && (Board.Tokens.Count >= (Board.Width * (Board.Height - 1))))
 			{
 				PlayerBase? winnerPlayer = null;
+				bool isDraw = false;
 				int maxScore = -1;
 				
 				foreach (var p in Players)
@@ -69,11 +64,23 @@ namespace Connect4
 						winnerPlayer = p;
 						maxScore = p.Score;
 					}
+					else if (p.Score == maxScore)
+					{
+						isDraw = true;
+					}
 				}
 				
 				if (winnerPlayer != null)
 				{
-					Program.PopupMessage($"{winnerPlayer.Name} has won!", ConsoleColor.Green);
+					if (isDraw)
+					{
+						Program.PopupMessage($"It is a draw :/", ConsoleColor.White);
+					}
+					else
+					{
+						Program.PopupMessage($"{winnerPlayer.Name} has won!", ConsoleColor.Green);
+					}
+					
 					Program.ProgramRunning = false;
 				}
 			}
