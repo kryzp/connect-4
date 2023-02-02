@@ -65,16 +65,24 @@ namespace Connect4.Game
 			TextImage wrapper = GetBoardWrapper();
 			TextImage boardImg = GetBoardImage();
 
-			boardImg.DrawTo(wrapper, new Coordinates(2, 1));
+			boardImg.DrawTo(wrapper, new Coordinates(2, 3));
 
 			Program.Renderer.PushImage(wrapper, DrawCoords, 0.25f, true);
 		}
 
 		private TextImage GetBoardWrapper()
 		{
-			TextImage ret = new TextImage(2*Width + 2, Height);
+			TextImage ret = new TextImage(2*Width + 2, Height + 2);
 
-			ret.DrawBox(Coordinates.ORIGIN, new Coordinates(Width*2 + 2, Height), ConsoleColor.Gray);
+			ret.DrawBox(new Coordinates(0, 1), new Coordinates((Width + 1) * 2, Height + 2), ConsoleColor.Gray);
+			ret.DrawBox(Coordinates.ORIGIN, new Coordinates(Width * 2 + 2, 2), ConsoleColor.Gray);
+			ret.DrawLine(new Coordinates(1, 1), new Coordinates((Width + 1) * 2, 1), new ColouredChar(' ', ConsoleColor.Black));
+
+			for (int i = 0; i < Program.Game.Board.Width; i++)
+				ret.DrawChar(new Coordinates(2 * (1 + i), 1), new ColouredChar((i + 1).ToString()[0], ConsoleColor.Cyan));
+
+			ret.DrawChar(new Coordinates(0, 2), new ColouredChar(Characters.SPLIT_RIGHT, ConsoleColor.Gray));
+			ret.DrawChar(new Coordinates((Width + 1) * 2, 2), new ColouredChar(Characters.SPLIT_LEFT, ConsoleColor.Gray));
 
 			return ret;
 		}

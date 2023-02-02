@@ -146,7 +146,11 @@ namespace Connect4
 					if (endlessModeInputBox.Text.Length <= 0 ||
 					    player1NameInputBox.Text.Length <= 0 ||
 					    player1TokenSymbolInputBox.Text.Length <= 0 ||
-					    player1ColourInputBox.Text.Length <= 0)
+					    player1ColourInputBox.Text.Length <= 0 ||
+					    player2NameInputBox.Text.Length <= 0 ||
+					    player2TokenSymbolInputBox.Text.Length <= 0 ||
+					    player2ColourInputBox.Text.Length <= 0 ||
+					    shouldP2beAI.Text.Length <= 0)
 					{
 						PopupError("One of the input boxes is left empty!");
 						return;

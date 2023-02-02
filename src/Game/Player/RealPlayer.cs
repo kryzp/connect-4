@@ -43,7 +43,7 @@ namespace Connect4.Game.Player
 			selectionBeam.DrawChar(new Coordinates(0, h), new ColouredChar('+', ConsoleColor.Yellow));
 
 			Program.Renderer.PushImage(
-				selectionBeam, Program.Game.Board.DrawCoords + new Coordinates(currCol*2 + 2, 1), 1.2f, true
+				selectionBeam, Program.Game.Board.DrawCoords + new Coordinates(currCol*2 + 2, 3), 1.2f, true
 			);
 		}
 	}
